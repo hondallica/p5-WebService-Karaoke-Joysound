@@ -153,11 +153,6 @@ WebService::Karaoke::Joysound - カラオケJoysoundの検索フォームラッ�
 
 カラオケJoysoundの検索フォームラッパー
 
-=head1 METHODS
-
-=head3 artist_search
-
-    my $res = $joysound->artist_search('Metallica');
 
 =head1 LICENSE
 

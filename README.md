@@ -15,12 +15,6 @@ WebService::Karaoke::Joysound - カラオケJoysoundの検索フォームラッ�
 
 カラオケJoysoundの検索フォームラッパー
 
-# METHODS
-
-### artist\_search
-
-    my $res = $joysound->artist_search('Metallica');
-
 # LICENSE
 
 Copyright (C) Hondallica.
