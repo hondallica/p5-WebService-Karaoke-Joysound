@@ -7,7 +7,9 @@ WebService::Karaoke::Joysound - カラオケJoysoundの検索フォームラッ�
     use WebService::Karaoke::Joysound;
 
     my $joysound = new WebService::Karaoke::Joysound;
-    my $res = $joysound->artist_search('Metallica');
+
+    my $data = $joysound->search('artist', 'Metallica');
+    $data = $joysound->search('songs', 233048);
 
 # DESCRIPTION
 
@@ -29,11 +31,3 @@ it under the same terms as Perl itself.
 # AUTHOR
 
 Hondallica <hondallica@gmail.com>
-
-# POD ERRORS
-
-Hey! **The above document had some coding errors, which are explained below:**
-
-- Around line 100:
-
-    &#x3d;pod directives shouldn't be over one line long!  Ignoring all 8 lines of content

@@ -62,6 +62,16 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/hondallica/p5-WebService-Karaoke-Joysound/issues"
+      },
+      "homepage" : "https://github.com/hondallica/p5-WebService-Karaoke-Joysound",
+      "repository" : {
+         "url" : "https://github.com/hondallica/p5-WebService-Karaoke-Joysound.git",
+         "web" : "https://github.com/hondallica/p5-WebService-Karaoke-Joysound"
+      }
+   },
    "version" : "0.01",
    "x_authority" : "cpan:HONDALLIC"
 }
