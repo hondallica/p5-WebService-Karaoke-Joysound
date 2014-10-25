@@ -17,11 +17,7 @@ has 'match' => (
     is => 'ro',
     required => 1,
     default => sub {
-        {
-            FORWARD => 1,
-            PARTIAL => 2,
-            FULL => 3,
-        }, 
+        { FORWARD => 1, PARTIAL => 2, FULL => 3 } 
     },
 );
 
@@ -35,7 +31,7 @@ has 'param' => (
             karaokeall => 1,
             searchType => '01',
             searchWordType => 1,
-            searchLikeType => 1,
+            searchLikeType => 2,
         };
     },
 );
@@ -61,12 +57,6 @@ has 'request_param' => (
         artist => {
             path => 'artistsearchword.htm',
             regex => qr|<td class="singer"><a href="(?<url>.+)">(?<name>.+)</a></td>|,
-            param => {
-                karaokeall => 1,
-                searchType => '01',
-                searchWordType => 1,
-                searchLikeType => 3,
-            },
             id => 'artistId',
         },
         songs => {
@@ -83,37 +73,31 @@ sub _make_query_param {
 
     my $url = URI->new;
     map { $url->query_param( $_, $self->param->{$_} ) } keys %{$self->param};
+
     if ($mode eq 'artist') {
         $url->query_param('searchWord', $search_word);
     } elsif ($mode eq 'songs') {
         $url->query_param('artistId', $search_word);
     }
+
     return $url;
+
 }
 
 
 sub search {
     my ($self, $mode, $search_word) = @_;
 
-    my %data = ();
-    my $url = $self->_make_query_param($mode, $search_word);
-    my $html = $self->request(
-        $self->{request_param}{$mode}{path} . $url, 
-        $search_word
-    );
+    my $path = 'ex/search/' .
+               $self->{request_param}{$mode}{path} .
+               $self->_make_query_param($mode, $search_word);
 
-    my @lines = split /\n/, $html;
-    for my $line (@lines) {
-        my $regex = $self->{request_param}{$mode}{regex};
-        if ($line =~ m|$regex|) {
-            my $id = URI->new($+{url})
-                        ->query_param($self->request_param->{$mode}{id});
-            $data{$id} = decode_entities $+{name};
-        }
-    }
+    my $html = $self->request($path, $search_word);
+
+    return $self->response($mode, $html);
     
-    return \%data;
 }
+
 
 sub request {
     my ( $self, $path, $search_word ) = @_;
@@ -121,13 +105,29 @@ sub request {
     my ($version, $status, $message, $headers, $content) = $self->http->request(
         scheme => 'http',
         host => 'joysound.com',
-        path_query => "ex/search/$path",
+        path_query => $path,
         method => 'GET',
     );
 
     confess $message if $status != 200;
     return $content;
+}
 
+
+sub response {
+    my ( $self, $mode, $html ) = @_;
+
+    my %data = ();
+    my $regex = $self->{request_param}{$mode}{regex};
+    my $search_id = $self->{request_param}{$mode}{id};
+
+    for my $line ( split /\n/, $html ) {
+        next unless $line =~ m|$regex|;
+        my $id = URI->new($+{url})->query_param($search_id);
+        $data{$id} = decode_entities $+{name};
+    }
+
+    return \%data;
 }
 
 

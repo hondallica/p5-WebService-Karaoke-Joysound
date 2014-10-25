@@ -19,29 +19,16 @@ is $joysound->request_param->{songs}{path}, 'artist.htm';
 is $joysound->request_param->{artist}{path}, 'artistsearchword.htm';
 
 
-is $joysound->request_param->{artist}{param}{karaokeall}, 1;
-is $joysound->request_param->{artist}{param}{searchType}, '01';
-is $joysound->request_param->{artist}{param}{searchWordType}, 1;
-is $joysound->request_param->{artist}{param}{searchLikeType}, 3;
-
-
-my $data = $joysound->search('artist', 'Metallica');
+my $data = $joysound->search('artist', 'BABYMETAL');
 ok $data;
 warn Dumper $data;
 
-my $data = $joysound->search('songs', 233048);
-ok $data;
-warn Dumper $data;
+for my $id (keys %$data) {
+    my $data = $joysound->search('songs', $id);
+    ok $data, $id . ':' . $data->{$id};
+    warn Dumper $data;
+}
 
-
-#my $data = $joysound->artist_search('Metal');
-#ok $data;
-#warn Dumper $data;
-
-
-#my $data = $joysound->songs_search(233048);
-#ok $data;
-#warn Dumper $data;
 
 done_testing;
 
