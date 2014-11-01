@@ -13,21 +13,19 @@ our $VERSION = "0.01";
 use Data::Dumper;
 
 
-has 'match' => (
-    is => 'ro',
-    required => 1,
-    default => sub {
-        { FORWARD => 1, PARTIAL => 2, FULL => 3 } 
-    },
-);
-
 $Net::DNS::Lite::CACHE = Cache::LRU->new( size => 512 );
+
+sub match_mode {
+    my ($self, $match_mode) = @_;
+    my $mode = { FORWARD => 1, PARTIAL => 2, FULL => 3 };
+    $self->{param}{searchLikeType} = $mode->{$match_mode};
+}
 
 has 'param' => (
     is => 'rw',
     requires => 1,
     default => sub {
-        return {
+        {
             karaokeall => 1,
             searchType => '01',
             searchWordType => 1,
@@ -81,7 +79,6 @@ sub _make_query_param {
     }
 
     return $url;
-
 }
 
 
@@ -93,9 +90,7 @@ sub search {
                $self->_make_query_param($mode, $search_word);
 
     my $html = $self->request($path, $search_word);
-
     return $self->response($mode, $html);
-    
 }
 
 
